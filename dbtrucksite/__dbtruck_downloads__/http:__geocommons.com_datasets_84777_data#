@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>GeoCommons</title>
+  <link rel="SHORTCUT ICON" href="http://geocommons.com/favicon.ico"/>
+  
+  <link href="http://assets0.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/stylesheets/maker.css?1326859579" media="all" rel="stylesheet" type="text/css" />
+  <link href="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/stylesheets/f1.css?1326859579" media="all" rel="stylesheet" type="text/css" />
+  <link href="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/stylesheets/jquery-ui-1.7.2.custom.css?1326859579" media="all" rel="stylesheet" type="text/css" />
+  
+  
+  
+    
+    <script src="http://assets0.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/javascripts/prototype.js?1326859579" type="text/javascript"></script>
+    <script src="http://assets2.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/javascripts/jquery-1.3.2.min.js?1326859579" type="text/javascript"></script>
+    <script type="text/javascript" charset="utf-8">
+      var jq = jQuery.noConflict();
+    </script>
+    
+    
+<script type="text/javascript" charset="utf-8">
+  if (top.frames.length!=0)
+    top.location=self.document.location;
+</script>
+
+
+  
+    
+    <script src="http://assets2.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/javascripts/wide_full.min.js?1326859579" type="text/javascript"></script>
+  
+  
+  <script src="http://assets2.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/javascripts/f1.overlay_grid.js?1326859579" type="text/javascript"></script>
+  <script src="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/javascripts/f1.jquery.dropdown.js?1326859579" type="text/javascript"></script>
+  <script src="http://assets2.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/javascripts/f1.overlay_filter.js?1326859579" type="text/javascript"></script>
+
+  <!--[if lt IE 7]>
+    <link href="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/stylesheets/maker_ie6.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/stylesheets/f1_ie6.css?1326859579" media="all" rel="stylesheet" type="text/css" />
+  <![endif]-->
+  <!--[if IE 7]>
+    <link href="http://assets2.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/stylesheets/f1_ie7.css?1326859579" media="all" rel="stylesheet" type="text/css" />
+  <![endif]-->
+  
+</head>
+
+<body style="height: 100%;" class="full_flash c_overlays a_data">
+  <div id="lightbox" style="display:none;"></div>
+  
+  <div class="f1-layout-north">
+    <div id="header_master" class="al_r  env_public ">
+	<div class="l" style="">	  
+	  
+		  <a href="http://geocommons.com/"><img alt="Logo" class="mhimg" id="mhlogo" src="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/logo.geocommons.png?1326859579" /></a>
+		
+		
+	</div>
+	<div class="r">
+		<div id="user_header" class="fl_r mhmid logged_out ">
+  
+    <div id="mh_info" class="rr">
+      <div id="logged_in_notice" style="display:none">
+        <div class="mh_userlinks">
+
+          <a href="/profile" class="mh_dd current_user_login clearfix"><img alt="G" src="http://assets0.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/g.person.png?1326859579" /><span class='current_user_login_name'></span></a>
+          <a href="/maps/new" class="roll b_make_map">Make a Map</a>
+          <a href="http://geocommons.com/home" class="roll b_upload_data">Upload Data</a>
+          
+        </div>
+      
+      </div>
+      <div id="logged_out_notice" style="">
+        <div class="mh_signin_links">
+          
+            New user? <a href="http://geocommons.com/register" class="show_signup">Sign up</a> |
+          
+	      <a href="http://geocommons.com/login" class="show_login">Sign in</a>
+           | <a href="http://geocommons.com/tour">Take a Tour</a>
+        </div>
+      </div>
+    </div>
+    <div id="mh_search" class="rr">
+      <form action="/search" method="get">
+        <input class="nice" id="mh_query" name="mh_query" onblur="if(this.value == ''){this.value = 'Search'}" onfocus="if(this.value == 'Search'){this.value = ''}" type="text" value="Search" />
+        <a href="#" class="mh_find_icon" onclick="this.parentNode.submit()"><img alt="Mh" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/mh.find.png?1326859579" /></a>        
+        <input style="display: none;" type="submit" value="Search" />
+      </form>
+    </div>
+    
+</div>
+
+	</div>
+</div>
+
+
+
+
+
+
+
+
+<div id="user_menu" style="display:none">
+  <ul class="user_menu_2"> 
+    <li><a href="/" title="Return to the home page">Home</a></li>
+    <li><a href="/library" title="View your library of data and maps">Your Library</a></li>
+    <li><a href="/users/false/edit" title="View and update your account information.">Your Profile</a></li>
+    
+    
+      <!-- <li><a href="/refinement_types/new" title="Create a new analysis">New Analysis</a></li> -->
+    
+    <li style="display:none">
+      <a href="/admin" title="Go to the Administration Panel">Admin</a>      
+    </li>
+    <li><a href="/logout" title="Log out of your account">Sign out</a></li>
+  </ul>
+</div>
+
+  
+
+
+    
+  <div id="show_map" class="fl_r">
+    <div id="show_map_l" class="l large">
+      <h1 class="large">
+        <a class="data_editing_title" href="/overlays/84777">Taco Bell - U.S.A         </a>
+      </h1>
+    </div>
+    <div id="show_map_r" class="r">
+      <div class="data_grid_r"><a href="/overlays/84777">&lt;&lt; Back to dataset</a> |  Uploaded by: <a href="/users/Bill">Bill</a>
+      </div>
+    </div>
+  </div>
+
+  </div>
+  
+  <div id="d_overlay" style="display:none"></div>
+<div id="d_contain" style="display:none"><div id="d_contain_2"><div id="d_contain_3">
+  <div id="d_membership">
+    <a href="" class="close_dialog">cancel</a>
+    <div id="d_upper">
+      <h2 id="membership_heading">Just one moment...</h2>
+      <small id="membership_message"></small>
+    </div>
+    <div id="d_main">
+        <div id="signin">
+          
+
+<div id="session_message" class="notice" style="display:none"></div>
+<form action="http://geocommons.com/sessions" id="new_session" method="post">
+<div style="overflow:auto">  
+  
+<fieldset class="nice">
+  <label for="session_login">Login</label>
+  <span class="field"><input class="nice" id="session_login" label="Login" name="session[login]" size="30" type="text" /></span>
+  
+  <span id="session_login_good" class="field_good" style="display:none"><img alt="Valid" height="24" src="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_good.png?1326859579" width="20" /></span>
+  <span id="session_login_bad" class="field_bad" style="display:none"><img alt="Incorrect" height="24" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_bad.png?1326859579" width="20" /></span>
+  <span id="session_login_loading" class="field_loading" style="display:none"><img alt="loading" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/tiny_spin.gif?1326859579" /></span>
+  <div id="session_login_tip" class="field_tip" style="display:none"></div>
+  
+</fieldset> 
+
+  
+<fieldset class="nice">
+  <label for="session_password">Password</label>
+  <span class="field"><input autocomplete="off" class="nice" id="session_password" label="Password" name="session[password]" size="30" type="password" /></span>
+  
+  <span id="session_password_good" class="field_good" style="display:none"><img alt="Valid" height="24" src="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_good.png?1326859579" width="20" /></span>
+  <span id="session_password_bad" class="field_bad" style="display:none"><img alt="Incorrect" height="24" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_bad.png?1326859579" width="20" /></span>
+  <span id="session_password_loading" class="field_loading" style="display:none"><img alt="loading" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/tiny_spin.gif?1326859579" /></span>
+  <div id="session_password_tip" class="field_tip" style="display:none"></div>
+  
+</fieldset> 
+
+	<input class="destination_url" id="signin_destination_url" name="destination_url" type="hidden" value="" />
+  <a href="http://geocommons.com/users/forgot_password" class="fp_link">Forgot your password?</a>
+  
+  <a href="#" class="submit">Sign up</a>
+  <input class="button" id="session_submit" name="commit" type="submit" value="Sign In" />
+  <img alt="Loading" class="loading" id="new_session_loading" src="http://assets0.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/loading.gif?1326859579" style="display:none" />
+</div>
+</form>
+          <div class="right">
+            
+              or...
+              <a href="" class="show_signup roll">Create a new account</a>
+            
+          </div>
+        </div>
+        
+          <div id="signup">
+            
+<div id="user_message" style="display:none"></div>
+<div>
+<form action="/users" class="new_user" id="new_user" method="post">
+<fieldset class="nice">
+  <label for="user_login">Login</label>
+  <span class="field"><input class="not_blank check_server nice" id="user_login" name="user[login]" size="30" type="text" /></span>
+  
+  <span id="user_login_good" class="field_good" style="display:none"><img alt="Valid" height="24" src="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_good.png?1326859579" width="20" /></span>
+  <span id="user_login_bad" class="field_bad" style="display:none"><img alt="Incorrect" height="24" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_bad.png?1326859579" width="20" /></span>
+  <span id="user_login_loading" class="field_loading" style="display:none"><img alt="loading" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/tiny_spin.gif?1326859579" /></span>
+  <div id="user_login_tip" class="field_tip" style="display:none"></div>
+  
+</fieldset> 
+
+
+<fieldset class="nice">
+  <label for="user_email">Email</label>
+  <span class="field"><input class="is_email check_server nice" id="user_email" name="user[email]" size="30" tip="We detest spam and will never give your email address to anyone." type="text" /></span>
+  
+  <span id="user_email_good" class="field_good" style="display:none"><img alt="Valid" height="24" src="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_good.png?1326859579" width="20" /></span>
+  <span id="user_email_bad" class="field_bad" style="display:none"><img alt="Incorrect" height="24" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_bad.png?1326859579" width="20" /></span>
+  <span id="user_email_loading" class="field_loading" style="display:none"><img alt="loading" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/tiny_spin.gif?1326859579" /></span>
+  <div id="user_email_tip" class="field_tip" style="display:none"></div>
+  <div class="field_tip">We detest spam and will never give your email address to anyone.</div>
+</fieldset> 
+
+
+<fieldset class="nice">
+  <label for="user_full_name">Full name</label>
+  <span class="field"><input class="not_blank nice" id="user_full_name" name="user[full_name]" size="30" type="text" /></span>
+  
+  <span id="user_full_name_good" class="field_good" style="display:none"><img alt="Valid" height="24" src="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_good.png?1326859579" width="20" /></span>
+  <span id="user_full_name_bad" class="field_bad" style="display:none"><img alt="Incorrect" height="24" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_bad.png?1326859579" width="20" /></span>
+  <span id="user_full_name_loading" class="field_loading" style="display:none"><img alt="loading" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/tiny_spin.gif?1326859579" /></span>
+  <div id="user_full_name_tip" class="field_tip" style="display:none"></div>
+  
+</fieldset> 
+
+
+
+<fieldset class="nice">
+  <label for="user_password">Password</label>
+  <span class="field"><input autocomplete="off" class="not_blank nice" id="user_password" label="Password" name="user[password]" size="30" type="password" /></span>
+  
+  <span id="user_password_good" class="field_good" style="display:none"><img alt="Valid" height="24" src="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_good.png?1326859579" width="20" /></span>
+  <span id="user_password_bad" class="field_bad" style="display:none"><img alt="Incorrect" height="24" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_bad.png?1326859579" width="20" /></span>
+  <span id="user_password_loading" class="field_loading" style="display:none"><img alt="loading" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/tiny_spin.gif?1326859579" /></span>
+  <div id="user_password_tip" class="field_tip" style="display:none"></div>
+  
+</fieldset> 
+
+
+<fieldset class="nice">
+  <label for="user_password_confirmation">Confirm Password</label>
+  <span class="field"><input autocomplete="off" class="confirm nice" id="user_password_confirmation" label="Confirm Password" name="user[password_confirmation]" size="30" type="password" /></span>
+  
+  <span id="user_password_confirmation_good" class="field_good" style="display:none"><img alt="Valid" height="24" src="http://assets1.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_good.png?1326859579" width="20" /></span>
+  <span id="user_password_confirmation_bad" class="field_bad" style="display:none"><img alt="Incorrect" height="24" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/field_bad.png?1326859579" width="20" /></span>
+  <span id="user_password_confirmation_loading" class="field_loading" style="display:none"><img alt="loading" src="http://assets3.geocommons.com/f71f18625609a85e6440cb2cc8f23e032d8b5e60/images/tiny_spin.gif?1326859579" /></span>
+  <div id="user_password_confirmation_tip" class="field_tip" style="display:none"></div>
+  
+</fieldset> 
+
+
+<br/>
+
+<div class="tou_notice">
+  <table> 
+    <tr>
+      <td width="25px;"><input name="user[receive_emails]" type="hidden" value="false" /><input checked="checked" id="user_receive_emails" name="user[receive_emails]" type="checkbox" value="true" /></td>
+      <td>Email me about updates to GeoCommons &amp; GeoIQ&nbsp;</td>
+    </tr> 
+  </table>
+</div>
+<br/>
+<input id="user_terms_of_use" name="user[terms_of_use]" type="hidden" value="1" />
+<input id="CSRF_token" name="CSRF_token" type="hidden" value="dfsg2i90" />
+
+
+<div class="tou_notice">By signing up you agree to the <a href="http://geocommons.com/about/tos" target="_gc_tou">GeoCommons Terms of Use</a>.</div>
+
+<input class="destination_url" id="signup_destination_url" name="destination_url" type="hidden" value="" />
+
+<a href="#" class="submit">Submit</a>
+
+</form>
+</div>
+
+            <div class="right">
+              or...
+              <a href="" class="show_signin roll">Sign in with your account</a>
+            </div>
+          </div>
+        
+    </div>
+  </div>
+</div></div></div>
+	
+
+  <div class="f1-layout-west"><div id="filters"></div></div>
+    <div class="open_filters" style="display:none"></div>
+
+  <div id="" class="f1-layout-center">
+  	
+
+
+
+
+
+
+<div id="data_grid"></div>
+
+
+  </div>
+
+  
+  <script type="text/javascript">
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+  </script>
+  <script type="text/javascript">
+  var pageTracker = _gat._getTracker("UA-1836539-5");
+  pageTracker._initData();
+  pageTracker._trackPageview();
+  </script>
+
+
+
+
+<script type="text/javascript" language="javascript">llactid=13553</script>
+<script type="text/javascript" language="javascript" src="http://t1.trackalyzer.com/trackalyze.js"></script>
+
+
+
+
+  
+  <script type="text/javascript" charset="utf-8">
+    jq(document).ready(function () {
+  		new F1.Layout({
+        show_filters: true
+      })
+   	});
+  </script>
+  
+  
+  
+  <script type="text/javascript">
+    var f1_filter = null
+    jq(document).ready(function () {
+
+      F1.Host = "http://geocommons.com";
+      
+      f1_filter = jq('#filters').f1_overlay_filter({ 
+        attributes: [{"actual_data_type": "string", "statistics": null, "name": "name", "hist_offset": 0, "original_name": "name", "categorize": null, "units": null, "data_type": "string", "id": 508007, "description": "", "position": 0, "overlay_id": 84777}, {"actual_data_type": "string", "statistics": null, "name": "description", "hist_offset": 0, "original_name": "description", "categorize": null, "units": null, "data_type": "string", "id": 508008, "description": "", "position": 1, "overlay_id": 84777}],
+        on_apply: function(model) {
+          F1.OverlayGrid.instances["data_grid"].set_filters(model);
+        }
+      })
+
+      var grid = new F1.OverlayGrid({
+        id:'data_grid',
+        element: 'data_grid',
+        dataset_id:84777,
+        data_attributes:[{"actual_data_type": "string", "statistics": null, "name": "name", "hist_offset": 0, "original_name": "name", "categorize": null, "units": null, "data_type": "string", "id": 508007, "description": "", "position": 0, "overlay_id": 84777}, {"actual_data_type": "string", "statistics": null, "name": "description", "hist_offset": 0, "original_name": "description", "categorize": null, "units": null, "data_type": "string", "id": 508008, "description": "", "position": 1, "overlay_id": 84777}],
+        edit_mode: false,
+        row_selectable: false,
+        limit: 50,
+        total: 2913,
+        save_text: "Save Changes",
+        hide_loading_on_save: false,
+        on_create_filter: function(attr, value) { jq('#filters').f1_overlay_filter('add_filter', attr, value); },
+        show_save: false,
+        on_save: function() {
+          window.location = F1.Host + "/overlays/data/" + this.dataset_id;
+        }
+      })
+      //F1.OverlayGrid.instances["data_grid"].init()
+      grid.init();
+
+      jq("#show_map_r").dropdown({
+        handle: '<a id="show_save" class="roll requires_login" href="#">save</a>',
+        dropdown_element: '<div id="save_box" class="ui-corner-all"></div>',
+        items: '<form action="/overlays/84777" class="edit_overlay" id="edit_overlay_84777" method="post"><div style="margin:0;padding:0"><input name="_method" type="hidden" value="put" /></div>\
+            <label for="overlay_title">Title</label><br />\
+            <input class=\"save_text\" id=\"overlay_title\" name=\"overlay[title]\" size=\"30\" type=\"text\" value=\"Taco Bell - U.S.A         \" /><br />\
+            <label for="overlay_description">Description</label><br />\
+            <textarea class=\"save_text\" cols=\"40\" id=\"overlay_description\" name=\"overlay[description]\" rows=\"10\">Taco Bell Store Locations in the USA <\/textarea><br />\
+            <input id="save_as_new" name="save_as_new" type="checkbox" value="true" /><label for="save_as_new">Save as new dataset?</label><br /><br />\
+            <a class="save_this_map roll requires_login" href="#">Save</a> or <a class="cancel_this_save" href="#">Cancel</a>\
+          </form>',
+        before_dropdown: function() {
+          // Disable save to new if rows deleted
+          if (grid.deleted_rows.length > 0) {
+            jq('#save_as_new').attr('disabled', true);
+          } else {
+            jq('#save_as_new').removeAttr('disabled');
+          }
+          
+            jq('#save_as_new').attr('checked', true);
+            jq('#save_as_new').attr('disabled', true);
+          
+          var total = grid.total;
+          var grand_total = grid.grand_total;
+          var label = "Save as new dataset";
+          if (!Object.isEmpty(grid.filters) && grid.has_uncommitted_changes())
+          {
+            label = "Save filtered data and changes as new dataset ("+total+" of "+grand_total+" features)";
+          } else if (!Object.isEmpty(grid.filters)) {
+            label = "Save filtered data as new dataset ("+total+" out of "+grand_total+" features)";
+          } else if (grid.has_uncommitted_changes() && grid.deleted_rows.length > 0) {
+            label = "Save as new disabled due to deleted rows; consider using a filter instead"
+          } else {
+            label = "Save changes as new dataset"
+          }
+          jq('label[for="save_as_new"]', jq(this).data('dropdown').dropdown_element).html(label);
+        }
+      });
+
+      jq("#save_box a.save_this_map").live("click", function(e) {
+        var data = jq('#save_box form').serialize();
+        var save_as_new = jq('#save_box #save_as_new').attr('checked');
+        jq('#click_shim, #save_box').hide();
+        grid.save({ save_as_new: save_as_new, overlay_data: data });
+        return false;
+      });
+
+      jq("#save_box a.cancel_this_save").live("click", function(e) {
+        jq('#click_shim, #save_box').hide();
+      });
+      
+      F1.Layout.instances["layout"].options.on_center_resize = function() {
+        var grid_height = jq('.f1-layout-center').outerHeight() - 31;
+        // outerHeight doesn't work the same for IE if scroll bar present...
+        var div = jq('.f1-layout-center .content').get(0);
+        var hasHorizontalScrollbar= div.scrollWidth > div.clientWidth;
+        if (navigator.appName == 'Microsoft Internet Explorer' && hasHorizontalScrollbar) {
+          grid_height = grid_height - 15
+        }
+        jq('#data_grid .grid_chart .content').css('max-height', grid_height); 
+      };
+      F1.Layout.instances["layout"].options.on_center_resize()
+
+    });
+
+  </script>
+
+  
+</body>
+</html>
