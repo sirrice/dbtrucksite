@@ -1,4 +1,4 @@
 dbtruck-site
 ============
 
-dbtruck's websit
+dbtruck's website
