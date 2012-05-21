@@ -181,9 +181,32 @@ def json_loc_data():
 def json_corr():
     """
     """
+    tables = request.form.get('tables', '[]')
+    limit = request.form.get('limit', '5')
+    offset = request.form.get('offset', '0')
+    try:
+        tables = json.loads(tables)
+    except Exception as e:
+        tables = None
+    try:
+        limit = int(limit)
+    except:
+        limit = 5
+
+    try:
+        offset = int(offset)
+    except:
+        offset = 0
+
+    if not tables:
+        meta = MetaData(db.engine)
+        meta.reflect()
+        tables = meta.tables.keys()
+
+    print offset, limit, tables    
     ret = '[]'
     try:
-        data = get_correlations()
+        data = get_correlations(tables, offset=offset, limit=limit)
         ret = json.dumps(data)
     except Exception as e:
         pdb.set_trace()

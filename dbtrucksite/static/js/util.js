@@ -21,18 +21,17 @@ function error(msg) {
 }
 
 
-function load_annotation_form(container, tablename) {
+function load_annotation_form(container, tablename, count) {
 	var url ='/annotate/get/'
 	$.post(url, {'table' : tablename}, function(resp) {
 		var loctypes = resp[0],
 			cols = resp[1],
 			annos = resp[2];
-		if (tablename == 'tacobell')
-			console.log(annos);
+
 		// construct a form
 		var form = $("<form/>").attr({action : '/annotate/update/', method : 'post'});
 		cols.forEach(function(col) {
-			var sel = $("<select/>").addClass('input-xlarge').attr('name', '_col_' + col)
+			var sel = $("<select/>").addClass('input').attr('name', '_col_' + col)
 			var found = false;
 			loctypes.forEach(function(loctype) {
 				var opt = $("<option />").val(loctype).text(loctype);
@@ -51,7 +50,7 @@ function load_annotation_form(container, tablename) {
 			var txt = $("<span/>").text(col);
 
 			var row = $("<div class='row'/>")
-				.append($("<div class='span4'/>").css('text-align', 'right').append(sel))
+				.append($("<div class='span3'/>").css('text-align', 'right').append(sel))
 				.append($("<div class='span5'/>").append(txt));
 			form.append(row);
 
@@ -64,14 +63,17 @@ function load_annotation_form(container, tablename) {
 		if (annos['_userinput_'])
 			input.text(annos['_userinput_']['col']);
 		var row = $("<div class='row'/>")
-			.append($("<div class='span4'/>").append(span))
+			.append($("<div class='span3'/>").append(span))
 			.append($("<div class='span5'/>").append(input));
 		form.append(row);		
 
 		form.append($("<input type='hidden' name='table'/>").val(tablename))
-		form.append($("<div class='row'><div class='span4'>&nbsp;</div><input type='submit' class='btn' value='update annotations'/></div>"))
+		form.append($("<div class='row'><div class='span3'>&nbsp;</div><div class='span5'><input type='submit' class='btn' value='update annotations'/></div></div>"))
 
-		var div = $("<div/>").append($("<h3/>").text("Pick location columns")).append(form);
+		var div = $("<div/>")
+			.append($("<h3/>").text("Pick location columns"))
+			.append($("<div/>").text("Will take up to " + (count * 0.6) + " seconds"))
+			.append(form);
 		container.append(div);
 	}, 'json')
 
@@ -85,10 +87,25 @@ function set_address(tablename, col) {
 	}, 'json');
 }
 
-function get_correlations() {
-	var url = '/json/data/corr/'
-	$.post(url, {}, function(resp) {
+function get_correlations(offset, limit) {
+	offset = offset? offset : 0;
+	limit = limit? limit : 6;
+	var url = '/json/data/corr/';
+	var tables = d3.keys(selectedmaptables)
+		.filter(function(d) { return selectedmaptables[d] });
+	tables = JSON.stringify(tables);
+	console.log(['getting correlations', tables, selectedmaptables])
+
+
+
+
+	$("#corrplot").empty()
+
+
+	$.post(url, {tables : tables, offset : offset, limit : limit}, function(resp) {
 		if (resp) {
+
+
 			resp.forEach(function(arr){
 				var left = arr[0],
 					right = arr[1],
@@ -96,6 +113,26 @@ function get_correlations() {
 				plot_correlation(left, right, data);
 				
 			})
+
+
+
+			var prev = $("<a href='#' class='link'/>").text("prev").css('margin-right', '10px');
+			var next = $("<a href='#' class='link'/>").text("next");
+			prev.click(function() {
+				get_correlations(offset - limit, limit);
+			})
+			next.click(function() {
+				get_correlations(offset + limit, limit);
+			})
+			var links = $("#corrplot_links");
+			links.empty();
+			if (offset > 0) {
+				links.append(prev);
+			}
+//			if (arr.length >= limit) {
+				links.append(next);	
+//			}		
+
 		}
 	}, 'json');
 }
@@ -117,11 +154,9 @@ function plot_correlation(left, right, data) {
 		y = d3.scale.linear().domain([miny, maxy]).range([p, h-p]);
 	
 
-	var container = $("<div></div>").addClass("row");
 	var span = $("<div></div>").addClass("span3");
 	console.log($("#corrplot"));
-	$("#corrplot").append(container);
-	container.append(span);
+	$("#corrplot").append(span);
 	console.log(span.get());
 
 	var svg = d3.selectAll(span.get()).append("svg")
@@ -130,7 +165,7 @@ function plot_correlation(left, right, data) {
 	svg.append("text")
 			.attr("text-anchor", "center")
 			.attr("x", p)
-			.attr("y", h+10)
+			.attr("y", h-10)
 			.text(left)
 	svg.append("text")
 			.attr("transform", "rotate(-90) translate(-"+(h-p)+", 20)")
@@ -173,30 +208,38 @@ function render_map_location_table(tablename, rows, metadata) {
 	if (rows.length == 0) {
 		return;
 	}
+	console.log(['rendering map data', tablename, metadata['stdmeters']])
 
 	var tnames = $("#map-tablenames");
 	var showing = false;
-	var el = $("<div></div>").addClass("tablename").text(tablename).css('color', metadata['color']);
+	var el = $("<div></div>")
+		.addClass("tablename")
+		.text(tablename + "("+metadata['nlatlons']+"/"+metadata['nrows']+")")
+		.css('color', '#999');
 	tnames.append(el);
 
 
 	var loc_cols = {};
 	(metadata['loc_cols'] || []).forEach(function(d) { loc_cols[d] = 1;})
-	var newdiv = $("<div/>").css('overflow-x', 'scroll');
-	var newtable = $("<table></table>").addClass("table-striped table table-bordered  table-condensed");
+	var newdiv = $("<div/>")
+		.css('overflow-x', 'scroll');
+	var newtable = $("<table></table>")
+		.addClass("table-striped table table-bordered  table-condensed");
 	render_rows(newtable, tablename, rows, loc_cols);
 
 
-	newdiv.append($("<h2/>").text(tablename)).append(newtable);
+	newdiv
+		.append($("<h2/>").text(tablename))
+		.append(newtable);
 	$("#mapdata").append(newdiv);
 	newdiv.hide();	
 
-	load_annotation_form(newdiv, tablename);
+	load_annotation_form(newdiv, tablename, metadata['nrows']);
 
 
 	var zoom = 18; 
 	var zoom_mpp = 0.597164; // meters / pixel
-	var meterspp = Math.max(meters_from_stats(metadata['stats']) / 5.0, 100) / 10.;
+	var meterspp = Math.max(metadata['stdmeters'] / 2.0, 100) / 10.;
 	while (zoom_mpp / 2 < meterspp) {
 		zoom -= 1;
 		zoom_mpp *= 2;
@@ -217,46 +260,31 @@ function render_map_location_table(tablename, rows, metadata) {
 	markers = markers.filter(function(d) {return d;})
 	console.log(markers.length + " markers");
 	el.click(function() {
-		if (center) {
-			console.log(['set center', center.toString()]);
-			map.setZoom(zoom);
-			map.setCenter(center);			
-		}
 		if (el.hasClass('selected')) {
 			el.removeClass('selected')
-			markers.forEach(function(m) {m.setVisible(false);})
+			markers.forEach(function(m) {m.setMap(null);})
 			newdiv.hide();
+			el.css('color', '#999');
+			selectedmaptables[tablename] = false;
 		} else {
 			el.addClass('selected');
 			markers.forEach(function(m) {m.setVisible(true);})
 			newdiv.show();
+			el.css('color', metadata['color']);
+			selectedmaptables[tablename] = true;
+			if (center) {
+				console.log(['set center', center.toString()]);
+				map.setZoom(zoom);
+				map.setCenter(center);			
+			}
+
 		}
+		get_correlations();
 
 	})
 
-}
+	mapmarkers.push(markers);
 
-function meters_from_stats(stats) {
-	if (!stats || stats.length < 8) {
-		return 100;
-	}
-	var latstd = stats[7], 
-		lonstd = stats[8],
-		lat = stats[5],
-		lon = stats[6],
-		pi = 3.141592658;
-
-	var R = 6371; // km
-	var dLat = (latstd) * (pi/180);
-	var dLon = (lonstd) * (pi/180);
-	var lat1 = lat1 * (pi/180);
-	var lat2 = lat2 * (pi/180);
-
-	var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-	        Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat) * Math.cos(lat); 
-	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-	var d = R * c;	
-	return d;
 }
 
 
@@ -264,18 +292,12 @@ function render_map_row_marker(row, metadata) {
 	var lat = row['lat'],
 		lon = row['lon'],
 		//latlon = row['_latlon']
-		meters = Math.max(meters_from_stats(metadata['stats']) / 5.0, 50);
+		meters = metadata['stdmeters'] / 3.0;
 	if (!lat || !lon) return;
-	//if (!latlon) { return ;}
-	//latlon = latlon.substring(1, latlon.length-1).split(',');
-	//var lat = parseFloat(latlon[0]),
-	//	lon = parseFloat(latlon[1]);
-
+	if (!meters) meters = 50;
 
 	var center = new google.maps.LatLng(lat, lon);
 	var opts = {
-//	    strokeColor: d3.rgb(metadata['color']).darker().hsl().toString(),
-//	    strokeOpacity: 0.8,
 	    strokeWeight: 0,
 	    fillColor: metadata['color'],
 	    fillOpacity: 0.65,
@@ -343,7 +365,7 @@ function gen_render_text_table(tablenamesid, dataid) {
 		tcont.append(newdiv);
 		newdiv.hide();
 
-		load_annotation_form(newdiv, tablename);
+		load_annotation_form(newdiv, tablename, metadata['nrows']);
 
 		el.click(function() {
 			newdiv.toggle();
@@ -376,6 +398,7 @@ function render_rows(container, tablename, rows, loc_cols) {
 			/*.html(function(d) {
 				return "<div>"+d+"</div><div><span class='setaddress'>set to address</span>";
 			})*/
+			.text(String)
 			.attr('class', 'header')
 			/*.on('click', function(col, i) {
 				set_address(tablename, col);

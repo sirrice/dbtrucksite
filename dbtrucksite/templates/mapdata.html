@@ -1,6 +1,6 @@
 
 <div class="row">
-  <div class="span2">
+  <div class="span3">
     <h3>Geocoded</h3>
     <div class="tablenames" id='map-tablenames'></div>
     <div><a href="#" id="refresh_map">Refresh map data</a></div>
@@ -9,17 +9,24 @@
     	$("#map-tablenames").empty();
     	$("#mapdata").empty();
     	$("#corrplot").empty();
+    	selectedmaptables = {};
+    	mapmarkers.forEach(function(markers) {
+    		markers.forEach(function(m) {
+    			m.setMap(null);
+    		})
+    	})
+    	mapmarkers = [];
         get_tables('/json/data/loc/', render_map_location_table);
 		get_correlations();
     })
     </script>
   </div>
-  <div class="span10" id="" >
-    <div class="row"><div id="map_canvas" style="width: 780px; height:500px;"></div></div>
-    <div class="row"><div class="span10" id="mapdata"></div></div>
+  <div class="span8" id="" >
+    <div class="row"><div id="map_canvas" style="width: 624px; height:500px;"></div></div>
+    <div class="row"><div class="span8" id="mapdata"></div></div>
   </div>
-  <div class="span3">
-  	<h3>Correlations</h3>
+  <div class="span7">
+  	<h3>Correlations <small id="corrplot_links"></small></h3>
   	<div id="corrplot"></div>
   </div>
 </div>
