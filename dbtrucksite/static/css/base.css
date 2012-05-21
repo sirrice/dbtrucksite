@@ -1,5 +1,6 @@
 .tablenames .selected{
-	color: steelblue;
+/*	color: steelblue;*/
+	text-decoration: underline;
 	font-weight: bold;
 }
 
@@ -12,10 +13,15 @@
 	color: steelblue;
 }
 
+table th {
+	text-align: center;
+	font-size: 10pt;
+}
 table td {
 	min-width: 50px;
 	max-width: 300px;
 	padding: 5px;
+	font-size: 8pt;
 }
 
 table tbody td {
@@ -32,6 +38,12 @@ form input {
 }
 
 
+.setaddress {
+	color: grey;
+	font-size: 9pt;
+	display: block;
+	font-weight: 444;
+}
 
 text {
 	font-family: sans-serif;
@@ -44,7 +56,8 @@ text {
 	shape-rendering: crispEdges;
 }
 circle {
-	fill-opacity: 0.8;
+	fill-opacity: 0.6;
+	stroke-width: 0;
 }
 .bgcircle{
 	fill: black;

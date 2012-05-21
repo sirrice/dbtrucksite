@@ -8,32 +8,37 @@ from operator import add
 from gevent.pywsgi import WSGIServer # must be pywsgi to support websocket
 from geventwebsocket.handler import WebSocketHandler
 from flask import Flask, request, render_template, g, redirect
+from sqlalchemy import *
+
 from dbtruck.dbtruck import *
 from dbtruck.exporters.db import *
 from dbtruck.exporters.pg import PGMethods
-from dbtruck.analyze.location import *
-from dbtruck.analyze.metadata import *
+from dbtruck.analyze.analyze import add_user_annotation
+#from dbtruck.analyze.metadata import *
+from dbtruck.analyze.models import *
 
-from dbtrucksite import app
 
-DBNAME = 'test'
+from dbtrucksite import app, db
+from dbtrucksite import app, db
+from dbtrucksite.data import *
+import dbtrucksite.settings as settings
+
 
 @app.before_request
 def before_request():
-    dbname = request.form.get('db', DBNAME)
-    g.db = connect(dbname)
-    g.dbname = dbname
     g.tstamp = md5.md5(str(hash(datetime.datetime.now()))).hexdigest()
         
 
 @app.teardown_request
 def teardown_request(exception):
-    try:
-        g.db.close()
-    except:
-        pass
+    pass
 
 
+@app.route('/test/', methods=['POST' ,'GET'])
+def test():
+    db.session.add(Metadata('newtable again'))
+    db.session.commit()
+    return str(db.session.query(Metadata).all())
         
 @app.route('/', methods=["POST", "GET"])
 def index():
@@ -46,81 +51,145 @@ def index():
         context['errormsg'] = str(e)
     return render_template('index.html', **context)
 
+@app.route('/annotate/get/', methods=['POST', 'GET'])
+def annotate_get():
+    meta = MetaData(db.engine)
+    meta.reflect()
+    
+    table = request.form.get('table', None)
+    annos = {}
+    cols = []
+    if table:
+        tablemd = Metadata.load_from_tablename(db.engine, table)
+        for anno in tablemd.annotations:
+            d = {}
+            d['annotype'] = anno.annotype
+            d['col'] = anno.name
+            d['loctype'] = anno.loctype
+            annos[anno.name] = d
 
+        schema = meta.tables[table]
+        cols = filter(lambda c: not c.startswith('_'), schema.columns.keys())
+    data = [ ['state', 'zipcode', 'city', 'address'],
+             cols,
+             annos ]
+    return json.dumps(data)
+
+@app.route('/annotate/update/', methods=['POST', 'GET'])
+def annotate_update():
+    try:
+        print request.form
+        tablename = request.form['table']
+        tablemd = Metadata.load_from_tablename(db.engine, tablename)        
+        newannos = []
+        for key, val in request.form.iteritems():
+            if val.strip() == '':
+                continue
+            if key == 'table':
+                continue
+            if key == '_userinput_':
+                anno = Annotation(val.strip(), key, 'parse_default', tablemd, annotype=1, user_set=True)
+            elif key.startswith('_col_'):
+                key = key[5:]
+                loctype = val.strip()
+                anno = Annotation(key, loctype, 'parse_default', tablemd, annotype=0, user_set=True)
+            newannos.append(anno)
+
+        tablemd.state = 1
+        
+        map(db_session.delete, tablemd.annotations)
+        db_session.add_all(newannos)
+        db_session.add(tablemd)
+        db_session.commit()
+    except:
+        traceback.print_exc()
+    return redirect('/')
+
+
+@app.route('/annotate/address/', methods=['POST', 'GET'])
+def annotate_address():
+    col = request.form.get('colname', None)
+    table = request.form.get('table', None)
+    if col and table:
+        tablemd = Metadata.load_from_tablename(db.engine, table)
+        add_user_annotation(tablemd, 'address', col)
+    
+    return "success"
 
 @app.route('/data/get/', methods=['POST', 'GET'])
 def data_get():
-    db = g.db
     url = request.form.get('url', None)
     name = request.form.get('name', None)
     if url and name:
         try:
-            import_datafiles([url], True, name, DBNAME, None, PGMethods)
+            import_datafiles([url], True, name, settings.DBNAME, None, PGMethods)
         except:
             traceback.print_exc()
     return redirect('/')
     
-    
 
+    
 @app.route('/json/data/all/', methods=['POST', 'GET'])
 def json_data():
     """
-    retrieve samples of ALL tables
+    retrieve samples of all tables
     """
-    db = g.db
+    meta = MetaData(db.engine)
+    meta.reflect()
     data = []
-    for table, loctable in get_table_name_pairs(db):
-        rows = get_table(table)
+    for tablename, schema in meta.tables.items():
+        if tablename.startswith('__dbtruck'):
+            continue
+        tablemd = Metadata.load_from_tablename(db.engine, tablename)
+        rows = get_table(tablename, schema)
         if rows:
             rows = stringify_rows(rows)
-            data.append([table, rows, get_table_metadata(table)])
-            for row in rows:
-                try:
-                    json.dumps(row)
-                except:
-                    print row
-                    traceback.print_exc()
-                    break
-    data.sort(key=lambda r: r[0])
+            md = get_table_metadata(tablemd)
+            data.append([tablename, rows, md])
+    data.sort(key=lambda r: r[0])                
     return json.dumps(data)
+
+
 
 @app.route('/json/data/loc/', methods=['POST', 'GET'])
 def json_loc_data():
     """
     retrieve samples of tables with hidden location data
     """
-    db = g.db
+    meta = MetaData(db.engine)
+    meta.reflect()
     data = []
-    for regtable, loctable in get_table_name_pairs(db):
-        if regtable and loctable:
-            rows = join_regular_and_hidden_tables(db, regtable)
-            if rows:
-                rows = stringify_rows(rows)
-                data.append([regtable, rows, get_table_metadata(regtable)])
+    for tablename, schema in meta.tables.items():
+        if tablename.startswith('__dbtruck'):
+            continue
+        tablemd = Metadata.load_from_tablename(db.engine, tablename)
+        if tablemd.state < 3:
+            continue
+        rows = get_table(tablename, schema)
+        if rows:
+            rows = stringify_rows(rows)
+            md = get_table_metadata(tablemd)
+            latlons = get_latlons(tablemd, md['nrows'])
+            md['latlons'] = latlons
+            print md['stats']
+            data.append([tablename, rows, md])
     data.sort(key=lambda r: r[0])                
     return json.dumps(data)
 
-@app.route('/json/data/noloc/', methods=['POST', 'GET'])
-def json_noloc_data():
+
+@app.route('/json/data/corr/', methods=['POST', 'GET'])
+def json_corr():
     """
-    retrieve samples of tables that we think have location data but are not geocoded
     """
-    # does the data contain city, state info?
-    db = g.db
-    data = []
-    locmd = LocationMD(db)
-    for regtable, loctable in get_table_name_pairs(db):
-        if regtable and not locmd.is_done(regtable):
-            loc_dict, colname_dict = find_location_columns(db, regtable)
-            if len(loc_dict) > 1:
-                rows = get_table(regtable)
-                if rows:
-                    md = get_table_metadata(regtable)
-                    md['loc_cols'] = reduce(add, colname_dict.values())
-                    rows = stringify_rows(rows)
-                    data.append([regtable, rows, md])
-    data.sort(key=lambda r: r[0])                    
-    return json.dumps(data)
+    ret = '[]'
+    try:
+        data = get_correlations()
+        ret = json.dumps(data)
+    except Exception as e:
+        pdb.set_trace()
+    return ret
+    
+
 
 @app.route('/createloc/', methods=['POST', 'GET'])
 def create_location_table():
@@ -129,82 +198,9 @@ def create_location_table():
     print tablename
     if tablename:
         try:
-            create_and_populate_location_table(g.db, tablename, maxinserts=30, user_input=locdata)
+            create_and_populate_location_table(db, tablename, maxinserts=30, user_input=locdata)
         except:
             traceback.print_exc()
     return redirect('/')
             
 
-def get_table_metadata(table):
-    db = g.db
-    ret = {}
-    try:
-        q = "select count(*) from %s" % table
-        count = query(db, q)[0][0]
-        loc_dict = find_location_columns(db, table)
-        if not ('state' in loc_dict or
-                'city' in loc_dict or
-                'zip' in loc_dict):
-            ret['needdata'] = True
-        else:
-            ret['needdata'] = False
-        loccols = set()
-        
-        ret['nrows'] = count
-        ret['hasloc'] = len(loc_dict) > 1
-        ret['tablename'] = table
-
-    except:
-        traceback.print_exc()
-
-    try:
-        stats = query(db, """select count(latitude), min(latitude), max(latitude),
-        min(longitude), max(longitude), avg(latitude), avg(longitude),
-        stddev(latitude), stddev(longitude) from _%s_loc_ where latitude is not null""" % table)[0]
-        ret['stats'] = stats
-    except Exception as e:
-        print e
-
-    return ret
-
-def get_table(table, limit=10, offset=0):
-    db = g.db
-    try:
-        q = """select column_name from information_schema.columns
-        where table_name = %s order by ordinal_position;"""
-        cols = [row[0] for row in query(db, q, (table,))]
-
-                
-        q = ["select %s from %s" % (','.join(cols), table)]
-        if limit is not None:
-            q.append('limit %d' % limit)
-        if offset is not None:
-            q.append('offset %d' % offset)
-        q = ' '.join(q)
-
-        rows = query(db, q)
-        rows = [dict(zip(cols, map(to_str,row))) for row in rows]    
-        return rows
-    except:
-        return None
-
-def stringify_rows(rows):
-    if not rows:
-        return []
-    cols = rows[0].keys()
-    return [dict(zip(cols, map(to_str, row.values()))) for row in rows]
-        
-    
-def to_str(v):
-    try:
-        return v.strftime('%m/%d/%Y %H:%M')
-    except:
-        if isinstance(v, unicode):
-            s = v.encode('utf-8', errors='ignore')
-        elif isinstance(v, basestring):
-            s = unicode(v, 'utf-8', errors='ignore').encode('utf-8', errors='ignore')
-        else:
-            s = str(v)
-        if len(s) > 150:
-            s = s[:150] + '...'
-        return s

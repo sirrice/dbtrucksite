@@ -3,9 +3,23 @@
   <div class="span2">
     <h3>Geocoded</h3>
     <div class="tablenames" id='map-tablenames'></div>
+    <div><a href="#" id="refresh_map">Refresh map data</a></div>
+    <script type="text/javascript">
+    $("#refresh_map").click(function(){
+    	$("#map-tablenames").empty();
+    	$("#mapdata").empty();
+    	$("#corrplot").empty();
+        get_tables('/json/data/loc/', render_map_location_table);
+		get_correlations();
+    })
+    </script>
   </div>
   <div class="span10" id="" >
     <div class="row"><div id="map_canvas" style="width: 780px; height:500px;"></div></div>
     <div class="row"><div class="span10" id="mapdata"></div></div>
+  </div>
+  <div class="span3">
+  	<h3>Correlations</h3>
+  	<div id="corrplot"></div>
   </div>
 </div>

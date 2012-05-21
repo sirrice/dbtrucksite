@@ -14,7 +14,7 @@
 
 	var map;
 	$(document).ready(function() {
-		get_tables('/json/data/all/', gen_render_text_table("#all-tablenames", "#alldata"));
+
 	    var mapOptions = {
 	      zoom: 4,
 	      center: new google.maps.LatLng(42.38566, -71.076119),
@@ -45,8 +45,12 @@
 		}];
 		mapOptions.styles = mapstyles;	    
 		map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+		get_tables('/json/data/all/', gen_render_text_table("#all-tablenames", "#alldata"));		
         get_tables('/json/data/loc/', render_map_location_table);
-        get_tables('/json/data/noloc/', gen_render_text_table("#map-noloc-tablenames", "#noloc-data"));        
+		get_correlations()        
+		//get_tables('/json/data/noloc/', gen_render_text_table("#map-noloc-tablenames", "#noloc-data"));        
+
 		$('a[data-toggle="tab"]').on('shown', function (e) {
 			google.maps.event.trigger(map, "resize");
 		});
@@ -103,7 +107,7 @@
 	</ul>
 
 	<div class='row' style="width:100%"> 
-		<div class="span12" >
+		<div class=""  style="margin-left: 20px">
 			<div class="tab-content">
 			  <div class="tab-pane active" id="tab-all">{% include "alldata.html" %}</div>
 			  <div class="tab-pane" id="tab-map">{% include "mapdata.html" ignore missing %}</div>

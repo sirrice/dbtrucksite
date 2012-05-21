@@ -21,6 +21,130 @@ function error(msg) {
 }
 
 
+function load_annotation_form(container, tablename) {
+	var url ='/annotate/get/'
+	$.post(url, {'table' : tablename}, function(resp) {
+		var loctypes = resp[0],
+			cols = resp[1],
+			annos = resp[2];
+		if (tablename == 'tacobell')
+			console.log(annos);
+		// construct a form
+		var form = $("<form/>").attr({action : '/annotate/update/', method : 'post'});
+		cols.forEach(function(col) {
+			var sel = $("<select/>").addClass('input-xlarge').attr('name', '_col_' + col)
+			var found = false;
+			loctypes.forEach(function(loctype) {
+				var opt = $("<option />").val(loctype).text(loctype);
+				if (annos[col] && loctype  == annos[col]['loctype']) {
+					console.log([col, annos[col], loctype])
+					opt.attr('selected', 'selected');
+					found = true;
+				}
+				sel.append(opt);
+			});
+			var opt = $("<option />").val('').text('---');
+			if (!found) {
+				opt.attr('selected', 'selected');
+			}
+			sel.append(opt);
+			var txt = $("<span/>").text(col);
+
+			var row = $("<div class='row'/>")
+				.append($("<div class='span4'/>").css('text-align', 'right').append(sel))
+				.append($("<div class='span5'/>").append(txt));
+			form.append(row);
+
+
+		});
+
+		// add user input (in case state/country not set
+		var span = $("<div>Custom State/City</div>").css("text-align", "right")
+		var input = $("<input name='_userinput_'>");
+		if (annos['_userinput_'])
+			input.text(annos['_userinput_']['col']);
+		var row = $("<div class='row'/>")
+			.append($("<div class='span4'/>").append(span))
+			.append($("<div class='span5'/>").append(input));
+		form.append(row);		
+
+		form.append($("<input type='hidden' name='table'/>").val(tablename))
+		form.append($("<div class='row'><div class='span4'>&nbsp;</div><input type='submit' class='btn' value='update annotations'/></div>"))
+
+		var div = $("<div/>").append($("<h3/>").text("Pick location columns")).append(form);
+		container.append(div);
+	}, 'json')
+
+
+}
+
+function set_address(tablename, col) {
+	var url = '/annotate/address/';
+	$.post(url, {'table' : tablename, "colname" : col}, function(resp) {
+		
+	}, 'json');
+}
+
+function get_correlations() {
+	var url = '/json/data/corr/'
+	$.post(url, {}, function(resp) {
+		if (resp) {
+			resp.forEach(function(arr){
+				var left = arr[0],
+					right = arr[1],
+					data = arr[2];
+				plot_correlation(left, right, data);
+				
+			})
+		}
+	}, 'json');
+}
+
+function plot_correlation(left, right, data) {
+	console.log(["correlation", left, right])
+	var ldata = data.map(function(d) {return d[0]}),
+		rdata = data.map(function(d) {return d[1]});
+	var minx = d3.min(ldata),
+		maxx = d3.max(ldata),
+		miny = d3.min(rdata),
+		maxy = d3.max(rdata),
+		w = 200,
+		h = 200,
+		p = 40;
+
+
+	var x = d3.scale.linear().domain([minx, maxx]).range([p, w-p]),
+		y = d3.scale.linear().domain([miny, maxy]).range([p, h-p]);
+	
+
+	var container = $("<div></div>").addClass("row");
+	var span = $("<div></div>").addClass("span3");
+	console.log($("#corrplot"));
+	$("#corrplot").append(container);
+	container.append(span);
+	console.log(span.get());
+
+	var svg = d3.selectAll(span.get()).append("svg")
+			.attr("width", w+"px")
+			.attr("height", h+"px")
+	svg.append("text")
+			.attr("text-anchor", "center")
+			.attr("x", p)
+			.attr("y", h+10)
+			.text(left)
+	svg.append("text")
+			.attr("transform", "rotate(-90) translate(-"+(h-p)+", 20)")
+			.text(right)
+
+	svg.selectAll("circle")
+			.data(data)
+		.enter().append("circle")
+			.attr("cx", function(d) {return x(d[0]);})
+			.attr("cy", function(d) {return y(d[1]);})
+			.attr("r", 2)
+			.attr("fill", "steelblue");
+	
+}
 
 
 function get_tables(url, cb) {
@@ -52,7 +176,7 @@ function render_map_location_table(tablename, rows, metadata) {
 
 	var tnames = $("#map-tablenames");
 	var showing = false;
-	var el = $("<div></div>").addClass("tablename").text(tablename);
+	var el = $("<div></div>").addClass("tablename").text(tablename).css('color', metadata['color']);
 	tnames.append(el);
 
 
@@ -60,21 +184,14 @@ function render_map_location_table(tablename, rows, metadata) {
 	(metadata['loc_cols'] || []).forEach(function(d) { loc_cols[d] = 1;})
 	var newdiv = $("<div/>").css('overflow-x', 'scroll');
 	var newtable = $("<table></table>").addClass("table-striped table table-bordered  table-condensed");
-	render_rows(newtable, rows, loc_cols);
+	render_rows(newtable, tablename, rows, loc_cols);
 
 
-	var form = $("<form action='/createloc/' method='POST'></form>");		
-	var submit = $("<input type='submit'/>").val("Get location data!")
-	var hidden = $("<input type='hidden' name='tablename' />").val(tablename);
-	var input = $("<input name='locdata' />")
-	if (metadata['needdata'])
-		form.append(input)
-	form.append(hidden).append(submit);
-	
-
-	newdiv.append($("<h2/>").text(tablename)).append(newtable).append(form);
+	newdiv.append($("<h2/>").text(tablename)).append(newtable);
 	$("#mapdata").append(newdiv);
 	newdiv.hide();	
+
+	load_annotation_form(newdiv, tablename);
 
 
 	var zoom = 18; 
@@ -96,9 +213,9 @@ function render_map_location_table(tablename, rows, metadata) {
 
 
 	console.log(["adding circles", metadata['color']])
-	var markers = rows.map(function(row) {return render_map_row_marker(row, metadata);});
+	var markers = metadata['latlons'].map(function(row) {return render_map_row_marker(row, metadata);});
 	markers = markers.filter(function(d) {return d;})
-	console.log(markers);
+	console.log(markers.length + " markers");
 	el.click(function() {
 		if (center) {
 			console.log(['set center', center.toString()]);
@@ -144,19 +261,24 @@ function meters_from_stats(stats) {
 
 
 function render_map_row_marker(row, metadata) {
-	var lat = row['latitude'],
-		lon = row['longitude'],
-		meters = Math.max(meters_from_stats(metadata['stats']) / 5.0, 100);
-	if (!lat || !lon) { return ;}
+	var lat = row['lat'],
+		lon = row['lon'],
+		//latlon = row['_latlon']
+		meters = Math.max(meters_from_stats(metadata['stats']) / 5.0, 50);
+	if (!lat || !lon) return;
+	//if (!latlon) { return ;}
+	//latlon = latlon.substring(1, latlon.length-1).split(',');
+	//var lat = parseFloat(latlon[0]),
+	//	lon = parseFloat(latlon[1]);
 
 
 	var center = new google.maps.LatLng(lat, lon);
 	var opts = {
-	    strokeColor: d3.rgb(metadata['color']).darker().hsl().toString(),
-	    strokeOpacity: 0.8,
-	    strokeWeight: 2,
+//	    strokeColor: d3.rgb(metadata['color']).darker().hsl().toString(),
+//	    strokeOpacity: 0.8,
+	    strokeWeight: 0,
 	    fillColor: metadata['color'],
-	    fillOpacity: 0.35,
+	    fillOpacity: 0.65,
 	    map : map,
 	    center: center,
 	    radius: meters,
@@ -164,7 +286,7 @@ function render_map_row_marker(row, metadata) {
 	};
 
   var circle = new google.maps.Circle(opts);
-
+  return circle;
   var elcont = $("#row-data");
   var el = $("<table></table>").addClass("table-striped table table-bordered  table-condensed");
   elcont.append(el);
@@ -212,21 +334,16 @@ function gen_render_text_table(tablenamesid, dataid) {
 
 		var newdiv = $("<div/>").css('overflow-x', 'scroll');
 		var newtable = $("<table></table>").addClass("table-striped table table-bordered  table-condensed");
-		render_rows(newtable, rows, loc_cols);
+		render_rows(newtable, tablename, rows, loc_cols);
 
 
-		var form = $("<form action='/createloc/' method='POST'></form>");		
-		var submit = $("<input type='submit'/>").val("Get location data!")
-		var hidden = $("<input type='hidden' name='tablename' />").val(tablename);
-		var input = $("<input name='locdata' />")
-		if (metadata['needdata'])
-			form.append(input)
-		form.append(hidden).append(submit);
 		
 
-		newdiv.append($("<h2/>").text(tablename)).append(newtable).append(form);
+		newdiv.append($("<h2/>").text(tablename)).append(newtable);
 		tcont.append(newdiv);
 		newdiv.hide();
+
+		load_annotation_form(newdiv, tablename);
 
 		el.click(function() {
 			newdiv.toggle();
@@ -240,7 +357,7 @@ function gen_render_text_table(tablenamesid, dataid) {
 	return _render_text_table;
 }
 
-function render_rows(container, rows, loc_cols) {
+function render_rows(container, tablename, rows, loc_cols) {
 	// render rows in container
 	// each row is a dictionary of attr -> value
 	// value is already stringified
@@ -251,11 +368,18 @@ function render_rows(container, rows, loc_cols) {
 	var header = dc.append("tr");
 	var body = dc.append('tbody');
 
+	var setaddr = $("<span class='link'>set as address</span>");
+
 	header.selectAll('th')
 			.data(cols)
 		.enter().append('th')
-			.text(String)
-			.attr('class', 'header');
+			/*.html(function(d) {
+				return "<div>"+d+"</div><div><span class='setaddress'>set to address</span>";
+			})*/
+			.attr('class', 'header')
+			/*.on('click', function(col, i) {
+				set_address(tablename, col);
+			});*/
 
 	var rowsarr = rows.map(function(row) {
 		return cols.map(function(col) {return [col, row[col]];});
@@ -305,4 +429,6 @@ function render_schema(selector,schema) {
 			.text(String)
 			.style("font-size", "smaller");						
 }
+
+
 
