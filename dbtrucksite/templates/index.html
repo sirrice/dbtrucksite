@@ -69,18 +69,6 @@
 <div class="row header">
 <div class="span12">
 
-<form id='querybox' class="form-horizontal"  action='/data/get/' method='POST'>
-<fieldset>
-<div class="control-group">
-	<label class="control-label" for="url">Add a URL dataset</label>
-	<div class="controls">
-		<input id='url' class='input-xlarge' name='url' />
-		<span>Dataset name</span>
-		<input id='url_name' class='input-xlarge' name='name' />
-		<input type='submit' class="btn btn-small" id="btn_url" value="Get the data!"/>
-	</div>
-</div>
-</fieldset>
 
 <div id="messagebox">
 {% if errormsg %}
@@ -104,7 +92,8 @@
 	<ul class="nav nav-tabs">
 	  <li class="active"><a id="tablink-all" href="#tab-all" data-toggle="tab">All Data</a></li>
 	  <li><a id="tablink-map" href="#tab-map" data-toggle="tab">Map Data</a></li>
-	  <li><a id="tablink-noloc" href="#tab-noloc" data-toggle="tab">Looks like location Data</a></li>	  
+	  <li><a id="tablink-adddata" href="#tab-adddata" data-toggle="tab">Add New Tables</a></li>	  
+	  <li style="float:right"><a id="tablink-help" href="#tab-help" data-toggle="tab">Help</a></li>	  	  
 	</ul>
 
 	<div class='row' style="width:100%"> 
@@ -112,7 +101,8 @@
 			<div class="tab-content">
 			  <div class="tab-pane active" id="tab-all">{% include "alldata.html" %}</div>
 			  <div class="tab-pane" id="tab-map">{% include "mapdata.html" ignore missing %}</div>
-			  <div class="tab-pane" id="tab-noloc">{% include "nolocdata.html" %}</div>			  
+			  <div class="tab-pane" id="tab-adddata">{% include "adddata.html" %}</div>			  
+			  <div class="tab-pane" id="tab-help">{% include "help.html" ignore missing %}</div>			  			  
 			</div>
 		</div>
 

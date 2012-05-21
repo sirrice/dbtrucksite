@@ -5,7 +5,7 @@ from sqlalchemy import *
 import dbtrucksite.settings as settings
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://sirrice@localhost:5432/%s" % settings.DBNAME
+app.config['SQLALCHEMY_DATABASE_URI'] = settings.DBURI
 db = SQLAlchemy(app)
 setattr(db, 'execute', db.engine.execute)
 

@@ -1,9 +1,13 @@
 
 <div class="row">
   <div class="span3">
-    <h3>Geocoded</h3>
+    <h3>
+    	Geocoded
+   	    <small><a href="#" id="refresh_map">refresh</a></small>
+    </h3>
+
     <div class="tablenames" id='map-tablenames'></div>
-    <div><a href="#" id="refresh_map">Refresh map data</a></div>
+
     <script type="text/javascript">
     $("#refresh_map").click(function(){
     	$("#map-tablenames").empty();
@@ -22,7 +26,10 @@
     </script>
   </div>
   <div class="span8" id="" >
-    <div class="row"><div id="map_canvas" style="width: 624px; height:500px;"></div></div>
+    <div class="row">
+      	<h3>Locations of rows in selected tables</h3>
+    	<div id="map_canvas" style="width: 624px; height:500px;"></div>
+    </div>
     <div class="row"><div class="span8" id="mapdata"></div></div>
   </div>
   <div class="span7">

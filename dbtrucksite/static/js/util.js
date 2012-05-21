@@ -116,23 +116,27 @@ function get_correlations(offset, limit) {
 
 
 
-			var prev = $("<a href='#' class='link'/>").text("prev").css('margin-right', '10px');
-			var next = $("<a href='#' class='link'/>").text("next");
-			prev.click(function() {
-				get_correlations(offset - limit, limit);
-			})
+			var prev = $("<a href='#' class='link'/>")
+				.text("prev")
+				.css('margin-right', "10px")
+				.css('color', function() { return (offset > 0)? '' : "#999"})
+				.on('click', function() {
+					if (offset > 0) {
+						get_correlations(offset - limit, limit);
+					}
+				})
+
+			var next = $("<a href='#' class='link'/>")
+				.text("next");
+
 			next.click(function() {
 				get_correlations(offset + limit, limit);
 			})
 			var links = $("#corrplot_links");
-			links.empty();
-			if (offset > 0) {
-				links.append(prev);
-			}
-//			if (arr.length >= limit) {
-				links.append(next);	
-//			}		
-
+			links
+				.empty()
+				.append(prev)
+				.append(next);				
 		}
 	}, 'json');
 }

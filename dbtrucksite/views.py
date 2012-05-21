@@ -53,6 +53,8 @@ def index():
 
 @app.route('/annotate/get/', methods=['POST', 'GET'])
 def annotate_get():
+    import threading
+    print threading.current_thread()
     meta = MetaData(db.engine)
     meta.reflect()
     

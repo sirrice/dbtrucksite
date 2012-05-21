@@ -1,60 +1,34 @@
+<div class="row">
 
-<h2 class="heading">Aggregate Data Plot <small></small></h2>
-	
-<div id="aggplot">
-	<div class="legend"></div>
-	<svg></svg>
-	<div class="xlabel"></div>
-</div>
+<div class="span3">&nbsp;</div>
+<div class="span7">
+	<h2>Add a new table</h2>
 
+	<p>
+		Just enter the URL of a table, json file, or HTML file that contains a table.
+	</p>
 
-
-{% if data %}
-
-<div class="page-header">
-	<h2>Data Cleaning Operations <small>(<span class="err_npts">0</span> pts)</small></h2>
-</div>
-
-<div id="zoomform" class="form-horizontal" >
-<!--<div class="control-group">
-	<label class="control-label" for="errortypes">Zoom In</label>
-	<div class="controls">
-
+	<form id='querybox' class="form-horizontal"  action='/data/get/' method='POST'>
+	<fieldset>
+	<div class="control-group">
+		<label class="control-label" for="url">Add a URL dataset</label>
+		<div class="controls">
+			<input id='url' class='input-xlarge' name='url' />
+		</div>
 	</div>
-</div>
-<div class="control-group">
-	<label class="control-label" for="errortypes">Set Bad Points</label>
-	<div class="controls">
-		<input type="submit" id="sb_err" class="btn btn-primary" value="Show tuples in highlighted points" />
-	</div>
-</div>
--->
-<legend>Actions</legend>
-<div class='form-actions'>
-	<div><input type="submit" id="sb_err" class="btn btn-primary" value="Show tuples in highlighted points" /></div>
-	<div><input type="submit" id="sb_addbad" class="btn btn-primary" value="Add Bad Points" />
-	<input type="submit" id="sb_addgood" class="btn btn-primary" value="Add Good Points" /></div>
-	<div><input type="submit" id="sb_clearbad" class="btn " value="Clear Bad points" />	
-	<input type="submit" id="sb_cleargood" class="btn " value="Clear Good points" />	</div>
-</div>
-</div>
-<script type="text/javascript">
-$("#sb_err").click(function() {
-    $('#link-tupplot').tab('show');
-    update_tupleplot();
-})
-$("#sb_addbad").click(function() {
-	global_state.selected_keys = clone(global_state.highlighted_keys);
-})
-$("#sb_addgood").click(function() {
-	global_state.good_keys = clone(global_state.highlighted_keys);
-})
-$("#sb_clearbad").click(function() {
-	global_state.selected_keys = {};
-})
-$("#sb_cleargood").click(function() {
-	global_state.good_keys = {};
-})
-</script>
 
-{% endif %}
+	<div class="control-group">
+		<label class="control-label" for="name">Dataset name</label>	
+		<div class="controls">
+			<input id='url_name' class='input-xlarge' name='name' />
+		</div>
+	</div>
+
+	<div class='form-actions'>
+		<input type='submit' class="btn btn-primary" id="btn_url" value="Get the data!"/>
+	</div>
+	</fieldset>
+	</form>
+
+</div>
+</div>
