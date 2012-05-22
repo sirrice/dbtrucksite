@@ -26,6 +26,7 @@ import dbtrucksite.settings as settings
 
 @app.before_request
 def before_request():
+    print "before request"
     g.tstamp = md5.md5(str(hash(datetime.datetime.now()))).hexdigest()
         
 
@@ -211,7 +212,9 @@ def json_corr():
         data = get_correlations(tables, offset=offset, limit=limit)
         ret = json.dumps(data)
     except Exception as e:
-        pdb.set_trace()
+        print e
+
+        #pdb.set_trace()
     return ret
     
 

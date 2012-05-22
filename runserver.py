@@ -1,10 +1,11 @@
+#!/usr/local/bin/python
 import psycopg2
-
 from gevent.pywsgi import WSGIServer # must be pywsgi to support websocket
 from geventwebsocket.handler import WebSocketHandler
 from gevent.pool import Pool
 
 from dbtrucksite import app
+
 
 if __name__ == '__main__':
 
