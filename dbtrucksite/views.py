@@ -30,9 +30,7 @@ def teardown_request(exception):
 
 @app.route('/test/', methods=['POST' ,'GET'])
 def test():
-    db.session.add(Metadata('newtable again'))
-    db.session.commit()
-    return str(db.session.query(Metadata).all())
+    return "test"
         
 @app.route('/', methods=["POST", "GET"])
 def index():
@@ -54,7 +52,7 @@ def annotate_get():
     annos = {}
     cols = []
     if table:
-        tablemd = Metadata.load_from_tablename(db.engine, table)
+        tablemd = Metadata.load_from_tablename(db.session, table)
         for anno in tablemd.annotations:
             d = {}
             d['annotype'] = anno.annotype
@@ -73,7 +71,6 @@ def annotate_get():
 def annotate_update():
     try:
         tablename = request.form['table']
-        tablemd = Metadata.load_from_tablename(db.engine, tablename)        
         newannosargs = []
         for key, val in request.form.iteritems():
             if val.strip() == '':
@@ -119,13 +116,14 @@ def json_data():
     for tablename, schema in meta.tables.items():
         if tablename.startswith('__dbtruck'):
             continue
-        tablemd = Metadata.load_from_tablename(db.engine, tablename)
+        tablemd = Metadata.load_from_tablename(db.session, tablename)
         rows = get_table(tablename, schema)
         if rows:
             rows = stringify_rows(rows)
             md = get_table_metadata(tablemd)
             data.append([tablename, rows, md])
-    data.sort(key=lambda r: r[0])                
+    data.sort(key=lambda r: r[0])
+    print "done!"
     return json.dumps(data)
 
 
@@ -141,7 +139,7 @@ def json_loc_data():
     for tablename, schema in meta.tables.items():
         if tablename.startswith('__dbtruck'):
             continue
-        tablemd = Metadata.load_from_tablename(db.engine, tablename)
+        tablemd = Metadata.load_from_tablename(db.session, tablename)
         if tablemd.state < 3:
             continue
         rows = get_table(tablename, schema)
