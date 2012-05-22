@@ -10,18 +10,10 @@ from geventwebsocket.handler import WebSocketHandler
 from flask import Flask, request, render_template, g, redirect
 from sqlalchemy import *
 
-from dbtruck.dbtruck import *
-from dbtruck.exporters.db import *
-from dbtruck.exporters.pg import PGMethods
-from dbtruck.analyze.analyze import add_user_annotation
-#from dbtruck.analyze.metadata import *
-from dbtruck.analyze.models import *
+from locjoin.analyze.models import *
 
-
-from dbtrucksite import app, db
 from dbtrucksite import app, db
 from dbtrucksite.data import *
-import dbtrucksite.settings as settings
 
 
 @app.before_request
@@ -54,8 +46,6 @@ def index():
 
 @app.route('/annotate/get/', methods=['POST', 'GET'])
 def annotate_get():
-    import threading
-    print threading.current_thread()
     meta = MetaData(db.engine)
     meta.reflect()
     
@@ -81,7 +71,6 @@ def annotate_get():
 @app.route('/annotate/update/', methods=['POST', 'GET'])
 def annotate_update():
     try:
-        print request.form
         tablename = request.form['table']
         tablemd = Metadata.load_from_tablename(db.engine, tablename)        
         newannos = []
@@ -98,36 +87,21 @@ def annotate_update():
                 anno = Annotation(key, loctype, 'parse_default', tablemd, annotype=0, user_set=True)
             newannos.append(anno)
 
-        tablemd.state = 1
-        
-        map(db_session.delete, tablemd.annotations)
-        db_session.add_all(newannos)
-        db_session.add(tablemd)
-        db_session.commit()
+        update_annotations(db.engine, tablename, newannos)
+
     except:
         traceback.print_exc()
     return redirect('/')
 
-
-@app.route('/annotate/address/', methods=['POST', 'GET'])
-def annotate_address():
-    col = request.form.get('colname', None)
-    table = request.form.get('table', None)
-    if col and table:
-        tablemd = Metadata.load_from_tablename(db.engine, table)
-        add_user_annotation(tablemd, 'address', col)
-    
-    return "success"
 
 @app.route('/data/get/', methods=['POST', 'GET'])
 def data_get():
     url = request.form.get('url', None)
     name = request.form.get('name', None)
     if url and name:
-        try:
-            import_datafiles([url], True, name, settings.DBNAME, None, PGMethods)
-        except:
-            traceback.print_exc()
+        add_table(db.engine, url, name)
+    else:
+        pass
     return redirect('/')
     
 

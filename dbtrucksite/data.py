@@ -4,11 +4,10 @@ import pdb
 
 from operator import add
 from sqlalchemy import *
-from dbtruck.analyze.models import *
+from locjoin.analyze.models import *
 
 from dbtrucksite import app, db
 from dbtrucksite.util import *
-import dbtrucksite.settings as settings
 
 
 def great_circle_distance(dlat, dlon):
