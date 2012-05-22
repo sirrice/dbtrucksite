@@ -2,7 +2,8 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import *
 
-DBURI = 'postgresql://sirrice@localhost:5432/test'
+from settings import DBURI
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = DBURI

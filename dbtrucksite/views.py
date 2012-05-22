@@ -1,3 +1,4 @@
+import re
 import json
 import md5
 import traceback
@@ -15,6 +16,11 @@ from locjoin.tasks import *
 
 from dbtrucksite import app, db
 from dbtrucksite.data import *
+
+re_space = re.compile('\s+')
+re_nonascii = re.compile('[^\w\s]')
+re_nonasciistart = re.compile('^[^\w]')
+
 
 
 @app.before_request
@@ -98,6 +104,7 @@ def data_get():
     url = request.form.get('url', None)
     name = request.form.get('name', None)
     if url and name:
+        name = re_nonasciistart.sub('', re_space.sub('_', re_nonascii.sub('', name.strip()).strip()))        
         add_table(db.session, url, name)
     else:
         pass

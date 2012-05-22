@@ -2,12 +2,47 @@
 
 <div class="span3">&nbsp;</div>
 <div class="span7">
+<section>
 	<h2>Add a new table</h2>
-
 	<p>
-		Just enter the URL of a table, json file, or HTML file that contains a table.
+		Add the data at a URL to the database.  It can be the URL of a csv file, json file, or 
+		HTML file that contains a table.
 	</p>
+	<p id="example_link"><a href="#">Explain how to use this form</a></p>
+	<div class='hero-unit example'>
+	<p class="example" >
+		For example, let's say we found a table on a website that we'd like to analyze:
+	</p>
+		<ul class="thumbnails example">
+		<li class="span5">
+		    <a href="#" class="thumbnail">
+		      <img src="/static/img/demo/site.png" alt="" />
+		    </a>
+		</li>
+		</ul>
+	<p class='example'>
+		Copy the URL 
+		(<a href="http://www.health.ny.gov/statistics/chac/cancer/ca_ora.htm">http://www.health.ny.gov/statistics/chac/cancer/ca_ora.htm</a>)
+		into the input box below, then give the data a name (e.g., oral_cancer).
+	</p>
+	<p class='example'>
+		The table will begin importing and you should be able to see it in the
+		"all data" tab!
+	</p>
+	</div>
+	<script type="text/javascript">
+	$(".example").hide()
+	$("#example_link").click(function() {$(".example").toggle()})
+	</script>
+</section>
 
+<section>
+
+	<div class="page-header">
+		<h1>Add table form</h1>
+	</div>
+
+	<div class="row">
 	<form id='querybox' class="form-horizontal"  action='/data/get/' method='POST'>
 	<fieldset>
 	<div class="control-group">
@@ -29,6 +64,9 @@
 	</div>
 	</fieldset>
 	</form>
+	</div>
+</section>
+
 
 </div>
 </div>
