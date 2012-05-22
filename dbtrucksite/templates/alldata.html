@@ -1,5 +1,61 @@
+<div class="help row" id="alldata_help" style="display:none;">
+<div class="hero-unit">
+<div class="row">
+
+<p>This tab lists all of the tables in the database</p>
+
+<div class="span6">
+	<h2>Left Section</h2>
+	<p>
+		This column lists all of the tables in the database.
+	</p>
+	<p>
+		The numbers next to a table (e.g., table_name (50/100)) specifies that the table contains 100
+		rows and we extracted location information from 50 of the rows.
+	</p>
+	<p>
+		You can display a table's data in the main section by clicking on the table name.
+	</p>
+</div>
+<div class="span1">&nbsp;</div>
+<div class="span6">
+	<h2>Main Section</h2>
+	<p>
+		This section will list the tables that have been selected.  We display the first 10 rows
+		in each table.
+	</p>
+	<p>
+		Below each table is a form that allows you to specify any location related columns in the 
+		table.  This information will be used to automatically geocode the table.
+	</p>
+	<p>
+		In addition, you can specify if all of the data in the table belongs to one city/zipcode/state.
+		This may happen if you downloaded e.g., New York health data.  If this is the case, the system
+		cannot propery geocode the table without this information (e.g., "Springfield" is found is multiple states in the US ).
+
+	</p>
+</div>
+</div>
+
+
+	<p>
+		<a href="#" onclick="$('#alldata_help').toggle()">hide</a>
+	</p>	
+</div>
+</div>
+
+
 
 <div class="row">
-	<div class="span3 tablenames" id='all-tablenames'></div>
+	<div class="span3">
+	    <div class="span2">
+		   	<a href="#" onclick="$('#alldata_help').toggle()">help?</a>
+	   	</div>
+	   	<hr/>
+
+	   	<div class="tablenames" id='all-tablenames'></div>
+		
+
+	</div>
 	<div class="span10" id="alldata" ></div>
 </div>

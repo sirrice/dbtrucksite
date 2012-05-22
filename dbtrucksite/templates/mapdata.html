@@ -1,6 +1,48 @@
+<div class="help row" id="map_help" style="display:none;">
+<div class="hero-unit">
+	<p>This tab displays three sections of data:</p>
+	<div class="row">
+	<div class="span4"> 
+	<h2>Geocoded</h2>
+	<p>
+		The left section lists all of the tables in the database that contain geolocation information.
+		The numbers next to a table (e.g., table_name (50/100)) specifies that the table contains 100
+		rows and we extracted location information from 50 of the rows.
+	</p>
+	<p>
+		You can plot a table's data on a map by clicking the tablename.  The table name will be colored 
+		the same as the markers in the map.
+	</p>
+	</div>
+	<div class="span1">&nbsp;</div>
+	<div class="span4"> 
+	<h2>Locations of rows in selected tables</h2>
+	<p>
+		The center section plots the rows of the selected tables.  The circle size doesn't have any meaning.
+
+		Samples rows from the selected tables are listed belowe the map.
+	</p>
+	</div>
+	<div class="span1">&nbsp;</div>
+	<div class="span4"> 	
+	<h2>Correlations</h2>
+	<p>
+		The right section shows correlations between the numerical columns in the selected tables.
+	</p>
+	</div>
+	</div>
+	<p>
+		<a href="#" onclick="$('#map_help').toggle()">hide</a>
+</div>
+</div>
+
 
 <div class="row">
   <div class="span3">
+    <div class="span2">
+   	<a href="#" onclick="$('#map_help').toggle()">help?</a>
+   	</div>
+   	<hr/>  
     <h3>
     	Geocoded
    	    <small><a href="#" id="refresh_map">refresh</a></small>
@@ -24,6 +66,8 @@
 		get_correlations();
     })
     </script>
+
+
   </div>
   <div class="span8" id="" >
     <div class="row">
