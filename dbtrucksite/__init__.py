@@ -10,5 +10,5 @@ app.config['SQLALCHEMY_DATABASE_URI'] = DBURI
 db = SQLAlchemy(app)
 setattr(db, 'execute', db.engine.execute)
 
-import dbtruck.analyze.models
+import locjoin.analyze.models
 import dbtrucksite.views
