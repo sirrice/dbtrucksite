@@ -108,7 +108,6 @@ def get_correlations(tables, offset=0, limit=5):
         if key not in bestscores or bestscores[key] < corr:
             bestscores[key] = corr
             bestrows[key] = row
-        else:
 
     bestscores = bestscores.items()
     bestscores.sort(key=lambda p:p[1], reverse=True)
