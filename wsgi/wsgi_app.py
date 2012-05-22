@@ -9,7 +9,7 @@ def main():
 
     # from dbtruck.util import get_logger
     # _log = get_logger(fname='/tmp/dbtruck.log')
-    # from dbtrucksite import app
+    from dbtrucksite import app
     # DEC2FLOAT = psycopg2.extensions.new_type(
     #     psycopg2.extensions.DECIMAL.values,
     #     'DEC2FLOAT',
