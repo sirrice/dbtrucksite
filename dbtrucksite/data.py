@@ -99,7 +99,7 @@ def get_correlations(tables, offset=0, limit=5):
     
     params = tables + tables
     rows = [row for row in db.engine.execute(q, params).fetchall()]
-    print "found ", len(rows), " correlations"
+
     bestscores = {}
     bestrows = {}
     for row in rows:
@@ -108,10 +108,8 @@ def get_correlations(tables, offset=0, limit=5):
         if key not in bestscores or bestscores[key] < corr:
             bestscores[key] = corr
             bestrows[key] = row
-            print "found\t", key
         else:
-            print "skipping\t", key, '\t', row
-    for x in bestscores.keys(): print x
+
     bestscores = bestscores.items()
     bestscores.sort(key=lambda p:p[1], reverse=True)
     rows = [bestrows[key] for key, score in bestscores[offset:offset+limit]]

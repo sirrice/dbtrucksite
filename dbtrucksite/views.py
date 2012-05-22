@@ -11,6 +11,7 @@ from flask import Flask, request, render_template, g, redirect
 from sqlalchemy import *
 
 from locjoin.analyze.models import *
+from locjoin.tasks import *
 
 from dbtrucksite import app, db
 from dbtrucksite.data import *
@@ -73,21 +74,22 @@ def annotate_update():
     try:
         tablename = request.form['table']
         tablemd = Metadata.load_from_tablename(db.engine, tablename)        
-        newannos = []
+        newannosargs = []
         for key, val in request.form.iteritems():
             if val.strip() == '':
                 continue
             if key == 'table':
                 continue
             if key == '_userinput_':
-                anno = Annotation(val.strip(), key, 'parse_default', tablemd, annotype=1, user_set=True)
+                args = (val.strip(), key, 'parse_default', 1)
             elif key.startswith('_col_'):
                 key = key[5:]
                 loctype = val.strip()
-                anno = Annotation(key, loctype, 'parse_default', tablemd, annotype=0, user_set=True)
-            newannos.append(anno)
+                args = (key, loctype, 'parse_default', 0)
+            newannosargs.append(args)
 
-        update_annotations(db.engine, tablename, newannos)
+        update_annotations(db.session, tablename, newannosargs)
+        db.session.commit()
 
     except:
         traceback.print_exc()
@@ -99,7 +101,7 @@ def data_get():
     url = request.form.get('url', None)
     name = request.form.get('name', None)
     if url and name:
-        add_table(db.engine, url, name)
+        add_table(db.session, url, name)
     else:
         pass
     return redirect('/')
