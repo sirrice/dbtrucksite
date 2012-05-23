@@ -61,10 +61,15 @@ def annotate_get():
         tablemd = Metadata.load_from_tablename(db.session, table)
         for anno in tablemd.annotations:
             d = {}
+            if anno.loctype == '_userinput_':
+                key = '_userinput_'
+            else:
+                key = anno.name
+                
             d['annotype'] = anno.annotype
             d['col'] = anno.name
             d['loctype'] = anno.loctype
-            annos[anno.name] = d
+            annos[key] = d
 
         schema = meta.tables[table]
         cols = filter(lambda c: not c.startswith('_'), schema.columns.keys())

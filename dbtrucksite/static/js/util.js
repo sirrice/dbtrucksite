@@ -70,9 +70,24 @@ function load_annotation_form(container, tablename, count) {
 		form.append($("<input type='hidden' name='table'/>").val(tablename))
 		form.append($("<div class='row'><div class='span3'>&nbsp;</div><div class='span5'><input type='submit' class='btn' value='update annotations'/></div></div>"))
 
+		// description
+		var infobox = $("<div class='span8'/>")
+		var info = $("<p>Use this form to manually specify if any of the columns are location related (an address, zipcode etc).</p>" + 
+		" <p>After this form is submitted, EasyData will geocode the table.  You can use the textbox to specify if" +
+		"all of the rows in the table belong in a particular area (e.g., new york).  EasyData will then restrict" +
+		"geocoding to that area.  </p><p>Set a column's value to 'address' to force EasyData to geocode that column " +
+		"(weird restriction, I know)</p>")
+
+		infobox
+			.append(info)
+			.append($("<div/>").text("Geocoding this table may take up to " + parseInt(count * 0.05) + " seconds"));
+		infobox = $("<div class='row'/>").append(infobox).css("display", "none");
+		var helptext = $("<small>toggle help</small>").click(function() {infobox.toggle()});
+
+
 		var div = $("<div/>")
-			.append($("<h3/>").text("Pick location columns"))
-			.append($("<div/>").text("Will take up to " + (count * 0.6) + " seconds"))
+			.append($("<h3/>").text("Pick location columns").append(helptext))
+			.append(infobox)
 			.append(form);
 		container.append(div);
 	}, 'json')
@@ -243,7 +258,7 @@ function render_map_location_table(tablename, rows, metadata) {
 
 	var zoom = 18; 
 	var zoom_mpp = 0.597164; // meters / pixel
-	var meterspp = Math.max(metadata['stdmeters'] / 2.0, 100) / 10.;
+	var meterspp = Math.max(metadata['stdmeters'] / 5.0, 100) / 10.;
 	while (zoom_mpp / 2 < meterspp) {
 		zoom -= 1;
 		zoom_mpp *= 2;
@@ -296,7 +311,7 @@ function render_map_row_marker(row, metadata) {
 	var lat = row['lat'],
 		lon = row['lon'],
 		//latlon = row['_latlon']
-		meters = metadata['stdmeters'] / 3.0;
+		meters = metadata['stdmeters'] / 6.0;
 	if (!lat || !lon) return;
 	if (!meters) meters = 50;
 

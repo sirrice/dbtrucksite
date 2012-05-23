@@ -11,13 +11,21 @@ from dbtrucksite.util import *
 
 
 def great_circle_distance(dlat, dlon):
-    lat1, lat2 = 0, dlat
-    lon1, lon2 = 0, dlon
+    lat1, lat2 = 40, dlat + 40
+    lon1, lon2 = 9, 9 + dlon
+
     dx = math.cos(lat1) * math.cos(lon1) - math.cos(lat2) * math.cos(lon2)
     dy = math.cos(lat1) * math.sin(lon1) - math.cos(lat2) * math.sin(lon2)
     ch = math.sqrt(dx**2 + dy**2)
     ang = 2 * math.asin(ch / 2.)
     return 6371. * ang
+
+
+def shitty_circle_distance(dlat, dlon):
+    latrange = 6371. / (90 + 90.)
+    lonrange = 6371. / (180 + 180.)
+    return math.sqrt((dlat * latrange)**2 + (dlon * lonrange)**2)
+
 
 def get_table_metadata(tablemd):
     ret = {}
@@ -60,8 +68,8 @@ def get_table_metadata(tablemd):
         ret['stats'] = [s for s in stats]
 
         dlat, dlon = tuple(ret['stats'][-2:])
-        dlatlon = great_circle_distance(dlat, dlon)
-        ret['stdmeters'] = dlatlon
+        dlatlon = shitty_circle_distance(dlat, dlon)
+        ret['stdmeters'] = dlatlon * 1000.
         print dlatlon
     except Exception as e:
         print e
