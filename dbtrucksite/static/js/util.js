@@ -170,7 +170,7 @@ function plot_correlation(left, right, data) {
 
 
 	var x = d3.scale.linear().domain([minx, maxx]).range([p, w-p]),
-		y = d3.scale.linear().domain([miny, maxy]).range([h-p, p]);
+		y = d3.scale.linear().domain([miny, maxy]).range([h-p-p, p]);
 	
 
 	var span = $("<div></div>").addClass("span3");
