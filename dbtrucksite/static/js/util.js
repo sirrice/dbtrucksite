@@ -287,7 +287,7 @@ function render_map_location_table(tablename, rows, metadata) {
 			selectedmaptables[tablename] = false;
 		} else {
 			el.addClass('selected');
-			markers.forEach(function(m) {m.setVisible(true);})
+			markers.forEach(function(m) {m.setMap(map);})
 			newdiv.show();
 			el.css('color', metadata['color']);
 			selectedmaptables[tablename] = true;
