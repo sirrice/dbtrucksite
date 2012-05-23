@@ -281,13 +281,13 @@ function render_map_location_table(tablename, rows, metadata) {
 	el.click(function() {
 		if (el.hasClass('selected')) {
 			el.removeClass('selected')
-			markers.forEach(function(m) {m.setMap(null);})
+			markers.forEach(function(m) {m.setVisible(false);})
 			newdiv.hide();
 			el.css('color', '#999');
 			selectedmaptables[tablename] = false;
 		} else {
 			el.addClass('selected');
-			markers.forEach(function(m) {m.setMap(map);})
+			markers.forEach(function(m) {m.setVisible(true);})
 			newdiv.show();
 			el.css('color', metadata['color']);
 			selectedmaptables[tablename] = true;
