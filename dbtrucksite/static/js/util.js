@@ -254,7 +254,23 @@ function render_map_location_table(tablename, rows, metadata) {
 	newdiv.hide();	
 
 	load_annotation_form(newdiv, tablename, metadata['nrows']);
+	if (!google) {
 
+		el.click(function() {
+			if (el.hasClass('selected')) {
+				el.removeClass('selected')
+				el.css('color', '#999');
+				selectedmaptables[tablename] = false;
+			} else {
+				el.addClass('selected');
+				el.css('color', metadata['color']);
+				selectedmaptables[tablename] = true;
+			}
+			get_correlations();
+
+		})		
+		return;
+	}
 
 	var zoom = 18; 
 	var zoom_mpp = 0.597164; // meters / pixel
@@ -265,19 +281,13 @@ function render_map_location_table(tablename, rows, metadata) {
 	}
 
 
-	var center = ll = ur = null;
-	if (metadata['stats']) {
-		var stats = metadata['stats'];
-		center = new google.maps.LatLng(stats[5], stats[6]);
-		ll = new google.maps.LatLng(stats[1], stats[3]);
-		ur = new google.maps.LatLng(stats[2], stats[4]);
-	}
-
 
 	console.log(["adding circles", metadata['color']])
 	var markers = metadata['latlons'].map(function(row) {return render_map_row_marker(row, metadata);});
 	markers = markers.filter(function(d) {return d;})
 	console.log(markers.length + " markers");
+
+
 	el.click(function() {
 		if (el.hasClass('selected')) {
 			el.removeClass('selected')
@@ -291,7 +301,9 @@ function render_map_location_table(tablename, rows, metadata) {
 			newdiv.show();
 			el.css('color', metadata['color']);
 			selectedmaptables[tablename] = true;
-			if (center) {
+			if (metadata['stats']) {
+				var stats = metadata['stats'];
+				var center = new google.maps.LatLng(stats[5], stats[6]);
 				console.log(['set center', center.toString()]);
 				map.setZoom(zoom);
 				map.setCenter(center);			

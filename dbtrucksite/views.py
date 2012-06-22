@@ -73,6 +73,7 @@ def annotate_get():
 
         schema = meta.tables[table]
         cols = filter(lambda c: not c.startswith('_'), schema.columns.keys())
+    print annos
     data = [ ['state', 'zipcode', 'city', 'address'],
              cols,
              annos ]
@@ -170,6 +171,7 @@ def json_loc_data():
 def json_corr():
     """
     """
+    print "correlation"
     tables = request.form.get('tables', '[]')
     limit = request.form.get('limit', '5')
     offset = request.form.get('offset', '0')

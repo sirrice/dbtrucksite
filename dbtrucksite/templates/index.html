@@ -2,6 +2,9 @@
 <head>
 	<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">	
 	<link rel="stylesheet" type="text/css" href="/static/css/base.css?{{g.tstamp}}">
+	<script type="text/javascript">
+		google = null;
+	</script>
 
 	<script type="text/javascript" src="/static/js/jquery.js" ></script>
 	<script type="text/javascript" src="/static/js/bootstrap.js" ></script>	
@@ -16,6 +19,12 @@
 	var map;
 	$(document).ready(function() {
 
+		get_tables('/json/data/all/', gen_render_text_table("#all-tablenames", "#alldata"));		
+        get_tables('/json/data/loc/', render_map_location_table);
+		get_correlations()        
+		//get_tables('/json/data/noloc/', gen_render_text_table("#map-noloc-tablenames", "#noloc-data"));        
+
+	
 	    var mapOptions = {
 	      zoom: 4,
 	      center: new google.maps.LatLng(42.38566, -71.076119),
@@ -46,12 +55,6 @@
 		}];
 		mapOptions.styles = mapstyles;	    
 		map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-
-		get_tables('/json/data/all/', gen_render_text_table("#all-tablenames", "#alldata"));		
-        get_tables('/json/data/loc/', render_map_location_table);
-		get_correlations()        
-		//get_tables('/json/data/noloc/', gen_render_text_table("#map-noloc-tablenames", "#noloc-data"));        
-
 		$('a[data-toggle="tab"]').on('shown', function (e) {
 			google.maps.event.trigger(map, "resize");
 		});

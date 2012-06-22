@@ -80,8 +80,12 @@ def get_table_metadata(tablemd):
 def get_latlons(tablemd, count, maxcount=500.):
     tablename = tablemd.tablename
     try:
-        threshold = maxcount / count
-        q = "select _latlon[0], _latlon[1] from %s where random() <= %%s limit %%s" % (tablename)
+        q = "select count(*) from %s where _latlon is not null" % tablename
+        count = db.engine.execute(q).fetchone()[0]
+        if count == 0:
+            return []
+        threshold = maxcount / float(count)
+        q = "select _latlon[0], _latlon[1] from %s where random() <= %%s and _latlon is not null limit %%s" % (tablename)
         rows = db.engine.execute(q, [count, maxcount]).fetchall()
         return [dict(zip(['lat', 'lon'], row)) for row in rows]
     except Exception as e:
@@ -122,10 +126,12 @@ def get_correlations(tables, offset=0, limit=5):
     rows = [bestrows[key] for key, score in bestscores[offset:offset+limit]]
     print rows
 
-    
+
     data = []
     for corr, r, t1, c1, a1, t2, c2, a2 in rows:
         try:
+            if t1 == 'lottery' or t2 == 'lottery':
+                continue
             leftcol = full_col_name('t1', c1, a1)
             rightcol = full_col_name('t2', c2, a2)
             join_data = get_join_data(t1, t2, r, leftcol, rightcol)
