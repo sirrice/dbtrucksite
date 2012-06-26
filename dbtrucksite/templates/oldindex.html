@@ -14,8 +14,55 @@
       src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDWuJ0maP70Bm5p7TrUCYdq2D5vQl91bT4&sensor=true">
     </script>
 	<script>
+	var mapmarkers = [];
+	var selectedmaptables = {};
+	var map;
 	$(document).ready(function() {
+
+		get_tables('/json/data/all/', gen_render_text_table("#all-tablenames", "#alldata"));		
+        get_tables('/json/data/loc/', render_map_location_table);
+		get_correlations()        
+		//get_tables('/json/data/noloc/', gen_render_text_table("#map-noloc-tablenames", "#noloc-data"));        
+
+	
+	    var mapOptions = {
+	      zoom: 4,
+	      center: new google.maps.LatLng(42.38566, -71.076119),
+	      mapTypeId: google.maps.MapTypeId.ROADMAP
+	    };
+		var mapstyles = [
+		{
+		   featureType: "road",
+		   stylers: [{ visibility: "off" } ]
+		},{
+		   featureType: "poi",
+		   stylers: [{ visibility: "off" }  ]
+		},{
+		   featureType: "administrative",
+		   stylers: [{ visibility: "off" }   ]
+		},{
+		   featureType: "administrative.locality",
+		   stylers: [{ visibility: "off" }   ]
+		},{
+		   featureType: "poi",
+		   stylers: [{ visibility: "off" }   ]
+		},{
+		   featureType: "water",
+		   stylers: [{ visibility: "simplified" },
+					{ lightness: -62 },
+					{ saturation: -63 },
+					{ gamma: 0.97 }	]
+		}];
+		mapOptions.styles = mapstyles;	    
+		map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+		$('a[data-toggle="tab"]').on('shown', function (e) {
+			google.maps.event.trigger(map, "resize");
+		});
+
+
 	});
+
+
 	</script>
 </head>
 
@@ -46,8 +93,7 @@
 
 
 	<ul class="nav nav-tabs">
-	  <li class="active"><a id="tablink-tables" href="#tab-tables" data-toggle="tab">Tables</a></li>
-	  <li><a id="tablink-all" href="#tab-all" data-toggle="tab">All Data</a></li>
+	  <li class="active"><a id="tablink-all" href="#tab-all" data-toggle="tab">All Data</a></li>
 	  <li><a id="tablink-map" href="#tab-map" data-toggle="tab">Map Data</a></li>
 	  <li><a id="tablink-adddata" href="#tab-adddata" data-toggle="tab">Add New Tables</a></li>	  
 	  <li style="float:right"><a id="tablink-help" href="#tab-help" data-toggle="tab">Help</a></li>	  	  
@@ -56,8 +102,7 @@
 	<div class='row' style="width:100%"> 
 		<div class=""  style="margin-left: 20px">
 			<div class="tab-content">
-			  <div class="tab-pane active" id="tab-tables">{% include "tables.html" %}</div>			
-			  <div class="tab-pane" id="tab-all">{% include "alldata.html" %}</div>
+			  <div class="tab-pane active" id="tab-all">{% include "alldata.html" %}</div>
 			  <div class="tab-pane" id="tab-map">{% include "mapdata.html" ignore missing %}</div>
 			  <div class="tab-pane" id="tab-adddata">{% include "adddata.html" %}</div>			  
 			  <div class="tab-pane" id="tab-help">{% include "help.html" ignore missing %}</div>			  			  
@@ -71,7 +116,7 @@
 	 
 	<script>
 	  $(function () { 
-		  $('.nav-tabs li.active').tab('show');
+		  $('#tab-all').tab('show');
 
 		})
 	</script>

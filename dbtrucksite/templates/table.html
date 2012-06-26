@@ -1,0 +1,125 @@
+
+
+<div class="container table-container">
+
+<div class="row">
+<h1>{{table.tablename}}</h1>
+
+</div>
+
+
+<div class="row">
+<div class="span12" style="overflow-x: scroll; overflow-y: hidden; width: 100%">
+	<table class="table">
+	<thead>
+		<tr>
+		{% for col in table.cols() %}
+			<th>{{col}}</th>
+		{% endfor %}
+		</tr>
+	</thead>
+
+	<tbody>
+
+		{% for row in table.rows(limit=5) %}
+		<tr>
+			{% for col in table.cols() %}
+				<td>{{ row.get(col,'') }}</td>
+			{% endfor %}
+		</tr>
+		{% endfor %}
+
+	</tbody>
+	</table>
+</div>
+</div>
+
+
+
+<form action="/metadata/update/" method="post">
+<input type="hidden" name="tablename" value="{{table.tablename}}"/>
+
+<div class="row" style="">
+<div class="span12">
+	<div class="row">
+		<div class="span3">Location Type</div>
+		<div class="span3">Give it a name</div>
+		<div class="span3">Format</div>
+		<div class="span1">&nbsp;</div>
+	</div>
+
+
+
+	{% for md in table.metadata() %}
+		<div class="row" id="mdrow_{{md.id}}">
+		<input type="hidden" name="deleted_{{md.id}}" id="deleted_{{md.id}}" value="0"/>
+		<div class="span3">
+			<select name="loc_type_{{md.id}}" id="" class="input">
+				<option value="3" {%if md.loc_type == 3%}selected{%endif%}>State</option>
+				<option value="4" {%if md.loc_type == 4%}selected{%endif%}>Zipcode</option>
+				<option value="6" {%if md.loc_type == 6%}selected{%endif%}>County</option>
+				<option value="15" {%if md.loc_type == 15%}selected{%endif%}>Address</option>
+			</select>
+		</div>
+		<div class="span3"><input type="text" class="input" name="col_name_{{md.id}}" value="{{md.col_name}}"></div>
+		<div class="span3">
+			<input name="format_{{md.id}}" value="{{md.fmt}}" class="input">
+		</div>
+		<div class="span1">
+			<span class='btn btn-danger' id="remove_{{md.id}}">remove</span>
+		</div>
+		</div>
+		<script type="text/javascript">
+			$('#remove_{{md.id}}').click(function(){
+				$("#mdrow_{{md.id}}").hide();
+				$("#deleted_{{md.id}}").val(1);
+			})
+		</script>
+	{% endfor %}
+
+
+	<div class="row" id="addloccontainer_{{table.tablename}}">
+	<div class="span5">
+		<input type="submit" class="btn" value="submit metadata" />
+		<span class="link" href="#" id="btn_addlocinfo_{{table.tablename}}">add location info</span>
+	</div>
+	</div>
+
+</div>
+</div>
+</form>
+
+<script type="text/javascript">
+	(function(){
+		var newid = -1;
+		$("#btn_addlocinfo_{{table.tablename}}").click(function(){
+			var sel = $("<select/>").addClass('input').attr('name', 'loc_type_' + newid);
+			var opts = [[-1, '----'], [3, 'State'], [4, 'Zipcode'], [6, 'County'], [15, 'Address']];
+			opts = opts.map(function(pair) {
+				var val = pair[0],
+					name = pair[1];
+				return $("<option/>").val(val).text(name);
+			});
+			opts.forEach(function(opt) {
+				sel.append(opt);
+			})
+
+			var colname = $("<input/>").attr('name', 'col_name_'+newid).addClass('input');
+			var fmt = $("<input/>").attr('name', 'format_' + newid).addClass('input')
+
+			var div = $("<div/>").addClass("row");		
+			var rm = $("<div class='span1'><span class='btn btn-danger'>remove</button></span>").click(function(){div.detach();})
+			var left = $("<div/>").addClass("span3").append(sel);
+			var mid = $("<div/>").addClass('span3').append(colname);
+			var right = $("<div/>").addClass("span3").append(fmt);
+			div.append(left).append(mid).append(right).append(rm)
+
+			$("#addloccontainer_{{table.tablename}}").before(div);
+			newid -= 1;
+			return false;
+		});
+	})();
+
+</script>
+
+</div>

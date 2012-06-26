@@ -1,3 +1,9 @@
+.table-container {
+	margin-bottom: 20px;
+	width: 1300px;
+}
+
+
 .tablenames .selected{
 /*	color: steelblue;*/
 	text-decoration: underline;
